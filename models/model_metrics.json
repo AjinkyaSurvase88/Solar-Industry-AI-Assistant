@@ -1,0 +1,32 @@
+{
+  "trained_at": "2026-06-20T14:16:23.232351",
+  "rows_trained": 55987,
+  "rows_tested": 13997,
+  "feature_count": 24,
+  "algorithm": "xgboost",
+  "has_xgboost": true,
+  "metrics": {
+    "generation_model": {
+      "r2": 0.9949036435467945,
+      "rmse": 156.65942290465867,
+      "mae": 81.93670609926193,
+      "mape": 4.576369284976058
+    },
+    "normalized_yield_model": {
+      "r2": 0.9998867013841627,
+      "rmse": 0.30055751761421756,
+      "mae": 0.22167785159195566,
+      "mape": 0.2828769706829502
+    },
+    "ridge_baseline": {
+      "r2": 0.9185341131817095,
+      "rmse": 626.3463040143831,
+      "mae": 379.4923168723048,
+      "mape": 78.67830989998222
+    }
+  },
+  "data_source": "NASA POWER API (https://power.larc.nasa.gov/)",
+  "data_years": "2000-2023",
+  "cities_covered": 81,
+  "countries_covered": 27
+}

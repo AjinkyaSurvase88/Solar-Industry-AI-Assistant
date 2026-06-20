@@ -1,0 +1,34 @@
+# Solar AI Assistant - Requirements
+# Install with: pip install -r requirements.txt
+
+# Core Framework
+streamlit>=1.35.0
+
+# Data Science
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.11.0
+
+# Machine Learning
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+joblib>=1.3.0
+
+# Visualization
+plotly>=5.20.0
+
+# HTTP & APIs
+requests>=2.31.0
+urllib3>=2.0.0
+
+# Environment & Config
+python-dotenv>=1.0.0
+
+# Geocoding (fallback, no API key needed)
+geopy>=2.4.0
+
+# Google Gemini LLM
+google-generativeai>=0.7.0
+
+# Utilities
+tqdm>=4.66.0
