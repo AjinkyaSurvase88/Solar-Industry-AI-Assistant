@@ -30,6 +30,11 @@ def get_db_connection():
             pass
 
     if not all([host, dbname, user, password]):
+        try:
+            import streamlit as st
+            st.error("🚨 Database Credentials Missing! Please check Streamlit Community Cloud 'Secrets' settings.")
+        except:
+            pass
         return None
 
     try:
