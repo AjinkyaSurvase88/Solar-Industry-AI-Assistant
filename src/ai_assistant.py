@@ -17,6 +17,14 @@ except ImportError:
 
 GEMINI_KEY = os.getenv("GEMINI_API_KEY", "")
 
+# Fallback to Streamlit Secrets for cloud deployment
+if not GEMINI_KEY or GEMINI_KEY == "your_gemini_api_key_here":
+    try:
+        import streamlit as st
+        GEMINI_KEY = st.secrets.get("GEMINI_API_KEY", GEMINI_KEY)
+    except Exception:
+        pass
+
 try:
     import google.generativeai as genai
     HAS_GEMINI = bool(GEMINI_KEY and GEMINI_KEY != "your_gemini_api_key_here")
