@@ -10,11 +10,24 @@ load_dotenv(Path(__file__).parent.parent / ".env")
 
 def get_db_connection():
     """Establish a connection to the PostgreSQL database."""
+    # First try os.getenv (for local .env)
     host = os.getenv("DB_HOST")
     port = os.getenv("DB_PORT", "5432")
     dbname = os.getenv("DB_NAME")
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
+
+    # If missing, fallback to Streamlit Secrets (for cloud deployment)
+    if not all([host, dbname, user, password]):
+        try:
+            import streamlit as st
+            host = st.secrets.get("DB_HOST", host)
+            port = st.secrets.get("DB_PORT", port)
+            dbname = st.secrets.get("DB_NAME", dbname)
+            user = st.secrets.get("DB_USER", user)
+            password = st.secrets.get("DB_PASSWORD", password)
+        except Exception:
+            pass
 
     if not all([host, dbname, user, password]):
         return None
