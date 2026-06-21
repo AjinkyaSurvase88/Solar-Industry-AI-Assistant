@@ -38,11 +38,17 @@ def get_db_connection():
             port=port,
             dbname=dbname,
             user=user,
-            password=password
+            password=password,
+            connect_timeout=10
         )
         return conn
     except Exception as e:
         print(f"Database connection error: {e}")
+        try:
+            import streamlit as st
+            st.error(f"Database connection error: {e}")
+        except:
+            pass
         return None
 
 def init_db():
@@ -107,6 +113,11 @@ def save_analysis_data(data_dict: dict) -> bool:
         return True
     except Exception as e:
         print(f"Error saving data to database: {e}")
+        try:
+            import streamlit as st
+            st.error(f"Error saving data to Supabase: {e}")
+        except:
+            pass
         conn.rollback()
         return False
     finally:
