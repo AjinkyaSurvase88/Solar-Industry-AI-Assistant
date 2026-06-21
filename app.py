@@ -229,6 +229,7 @@ try:
                                       chart_location_map, chart_cost_breakdown,
                                       chart_savings_forecast, chart_roi_kpi, chart_score_radar)
     from src.ai_assistant     import SolarAIAssistant, build_context, get_suggested_questions
+    from src.db_service       import init_db, save_analysis_data
     IMPORTS_OK = True
 except Exception as e:
     IMPORTS_OK = False
@@ -260,7 +261,13 @@ def init_session():
     if st.session_state.assistant is None and IMPORTS_OK:
         st.session_state.assistant = SolarAIAssistant()
 
+    if "db_initialized" not in st.session_state:
+        if IMPORTS_OK:
+            init_db()
+        st.session_state.db_initialized = True
+
 init_session()
+
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -564,6 +571,24 @@ def show_analysis():
                 "elec_rate":          elec_rate,
                 "property_type":      property_type,
             }
+
+            # Save to PostgreSQL
+            if IMPORTS_OK:
+                save_data = {
+                    "city": loc.get("city", "Unknown"),
+                    "lat": loc["lat"],
+                    "lon": loc["lon"],
+                    "property_type": property_type,
+                    "monthly_bill": monthly_bill,
+                    "monthly_consumption": monthly_consumption,
+                    "roof_area": roof_area,
+                    "budget": budget,
+                    "elec_rate": elec_rate,
+                    "suitability_score": score,
+                    "system_size_kwp": get_system_size(roof_area),
+                    "predicted_generation_kwh": generation
+                }
+                save_analysis_data(save_data)
 
             st.session_state.analysis_done = True
 
@@ -978,7 +1003,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-nav_options = ["Dashboard", "Solar Analysis", "Financial Report", "AI Assistant"]
+nav_options = ["Dashboard", "Solar Analytics", "Financial Report", "AI Assistant"]
 icons = ["house", "bar-chart-line", "piggy-bank", "robot"]
 
 selected_page = option_menu(
@@ -1011,7 +1036,7 @@ selected_page = option_menu(
 
 if selected_page == "Dashboard":
     show_home()
-elif selected_page == "Solar Analysis":
+elif selected_page == "Solar Analytics":
     show_analysis()
 elif selected_page == "Financial Report":
     show_financial()
