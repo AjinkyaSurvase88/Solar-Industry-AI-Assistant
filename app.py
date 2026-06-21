@@ -8,6 +8,7 @@ Data Source: NASA POWER API (https://power.larc.nasa.gov/)
 """
 
 import streamlit as st
+from streamlit_option_menu import option_menu
 import pandas as pd
 import numpy as np
 import sys
@@ -276,10 +277,6 @@ with st.sidebar:
 
     st.divider()
 
-    # Navigation
-    nav_options = ["🏠 Dashboard", "📊 Solar Analysis", "💰 Financial Report", "🤖 AI Assistant"]
-    page = st.radio("Navigation", nav_options, label_visibility="collapsed")
-
     st.divider()
 
     # Model Status
@@ -338,13 +335,6 @@ with st.sidebar:
 # PAGE: HOME
 # ═══════════════════════════════════════════════════════════════════════════════
 def show_home():
-    st.markdown("""
-    <div class="hero-banner">
-        <div class="hero-title">☀️ Solar Industry AI Assistant</div>
-        <div class="hero-sub">Powered by NASA POWER data · Machine Learning · Real-time AI Analysis</div>
-    </div>
-    """, unsafe_allow_html=True)
-
     # Stats Row
     col1, col2, col3, col4 = st.columns(4)
     stats = [
@@ -980,11 +970,54 @@ def show_chat():
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN ROUTER
 # ═══════════════════════════════════════════════════════════════════════════════
-if page == "🏠 Dashboard":
+
+# App Title & Logo Header
+st.markdown("""
+<div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 2rem; margin-top: 1rem;">
+    <div style="font-size: 3rem; filter: drop-shadow(0 0 15px rgba(244,168,38,0.4)); animation: float 4s ease-in-out infinite;">☀️</div>
+    <div>
+        <h1 style="margin: 0; padding: 0; font-size: 2.2rem; font-weight: 700; color: #E8EAF0; letter-spacing: -0.5px; line-height: 1.2;">Solar Industry <span style="color: #F4A826;">AI</span></h1>
+        <p style="margin: 0; padding: 0; font-size: 0.95rem; color: #9CA3AF; font-weight: 400; letter-spacing: 0.5px;">SMART ROOFTOP INTELLIGENCE</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+nav_options = ["Dashboard", "Solar Analysis", "Financial Report", "AI Assistant"]
+icons = ["house", "bar-chart-line", "piggy-bank", "robot"]
+
+selected_page = option_menu(
+    menu_title=None,
+    options=nav_options,
+    icons=icons,
+    default_index=0,
+    orientation="horizontal",
+    key="main_nav",
+    styles={
+        "container": {
+            "display": "flex", "flex-wrap": "wrap", "justify-content": "center",
+            "padding": "0!important", "background-color": "rgba(17, 24, 39, 0.4)", 
+            "border": "1px solid rgba(255,255,255,0.05)", "border-radius": "12px", 
+            "backdrop-filter": "blur(12px)", "margin-bottom": "2rem"
+        },
+        "icon": {"color": "#F4A826", "font-size": "1.1rem"}, 
+        "nav-link": {
+            "flex": "1 1 150px", "min-width": "150px", 
+            "font-size": "1.05rem", "font-family": "Inter, sans-serif", 
+            "text-align": "center", "margin": "0px", 
+            "--hover-color": "rgba(244,168,38,0.1)", "color": "#E8EAF0"
+        },
+        "nav-link-selected": {
+            "background-color": "rgba(244,168,38,0.2)", 
+            "color": "#F4A826", "border": "1px solid rgba(244,168,38,0.3)"
+        },
+    }
+)
+
+if selected_page == "Dashboard":
     show_home()
-elif page == "📊 Solar Analysis":
+elif selected_page == "Solar Analysis":
     show_analysis()
-elif page == "💰 Financial Report":
+elif selected_page == "Financial Report":
     show_financial()
-elif page == "🤖 AI Assistant":
+elif selected_page == "AI Assistant":
     show_chat()

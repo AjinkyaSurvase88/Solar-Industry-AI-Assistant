@@ -3,6 +3,7 @@
 
 # Core Framework
 streamlit>=1.35.0
+streamlit-option-menu>=0.3.13
 
 # Data Science
 pandas>=2.0.0

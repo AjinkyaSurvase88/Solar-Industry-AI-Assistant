@@ -232,6 +232,7 @@ class SolarAIAssistant:
             return text
 
         except Exception as e:
+            print(f"Gemini API Error: {e}")
             return self._fallback_response(message)
 
     def _fallback_response(self, message: str) -> str:
