@@ -903,8 +903,16 @@ def show_chat():
         </div>
         """, unsafe_allow_html=True)
 
-    # ── Suggested Questions ──
-    st.markdown("**💡 Suggested Questions** (click to ask):")
+    # ── Controls ──
+    col1, col2 = st.columns([5, 1])
+    with col1:
+        st.markdown("**💡 Suggested Questions** (click to ask):")
+    with col2:
+        if st.button("🗑️ Clear Chat", use_container_width=True):
+            st.session_state.chat_history = []
+            assistant.reset_chat()
+            st.rerun()
+
     questions = get_suggested_questions()
     cols = st.columns(4)
     for i, q in enumerate(questions):
@@ -914,57 +922,45 @@ def show_chat():
                 with st.spinner("🤔 Thinking..."):
                     response = assistant.chat(q)
                 st.session_state.chat_history.append({"role": "assistant", "content": response})
+                st.rerun()
 
     st.divider()
 
     # ── Chat History ──
-    chat_container = st.container()
+    chat_container = st.container(height=500)
+    
     with chat_container:
         if not st.session_state.chat_history:
             st.markdown("""
-            <div style="text-align:center; color:#6B7280; padding:2rem;">
-                <div style="font-size:3rem">☀️</div>
-                <div>Hello! I'm SolarBot, your AI solar consultant.</div>
-                <div style="font-size:0.9rem">Ask me anything about solar energy!</div>
+            <div style="text-align:center; color:#6B7280; padding:4rem 1rem;">
+                <div style="font-size:4rem; filter: drop-shadow(0 0 10px rgba(244,168,38,0.3));">☀️</div>
+                <div style="font-size:1.5rem; font-weight:600; color:#E8EAF0; margin-top:1rem;">Hello! I'm SolarBot.</div>
+                <div style="font-size:1rem; margin-top:0.5rem;">Your AI-powered solar energy consultant.</div>
             </div>
             """, unsafe_allow_html=True)
         else:
             for msg in st.session_state.chat_history:
-                if msg["role"] == "user":
-                    st.markdown(f"""
-                    <div class="chat-msg-user">
-                        <b style="color:#42A5F5">👤 You</b><br>{msg["content"]}
-                    </div>""", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"""
-                    <div class="chat-msg-bot">
-                        <b style="color:#F4A826">☀️ SolarBot</b><br>{msg["content"]}
-                    </div>""", unsafe_allow_html=True)
+                avatar = "👤" if msg["role"] == "user" else "☀️"
+                with st.chat_message(msg["role"], avatar=avatar):
+                    st.markdown(msg["content"])
 
     # ── Chat Input ──
-    st.divider()
-    col_input, col_btn, col_clr = st.columns([6, 1, 1])
-    with col_input:
-        user_msg = st.text_input(
-            "Ask SolarBot...",
-            placeholder="e.g. How much money will I save in 5 years?",
-            label_visibility="collapsed",
-            key="chat_input"
-        )
-    with col_btn:
-        send = st.button("Send ➤", use_container_width=True)
-    with col_clr:
-        if st.button("Clear", use_container_width=True):
-            st.session_state.chat_history = []
-            assistant.reset_chat()
-            st.rerun()
-
-    if send and user_msg.strip():
-        st.session_state.chat_history.append({"role": "user", "content": user_msg.strip()})
-        with st.spinner("🤔 Thinking..."):
-            response = assistant.chat(user_msg.strip())
+    if prompt := st.chat_input("Ask SolarBot... e.g. How much money will I save?"):
+        # Add user message
+        st.session_state.chat_history.append({"role": "user", "content": prompt})
+        
+        # Display instantly
+        with chat_container:
+            with st.chat_message("user", avatar="👤"):
+                st.markdown(prompt)
+                
+            with st.chat_message("assistant", avatar="☀️"):
+                with st.spinner("🤔 Thinking..."):
+                    response = assistant.chat(prompt)
+                st.markdown(response)
+                
+        # Save assistant message
         st.session_state.chat_history.append({"role": "assistant", "content": response})
-        st.rerun()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
